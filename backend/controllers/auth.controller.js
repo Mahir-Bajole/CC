@@ -86,10 +86,14 @@ export const loginController = async (req, res) => {
       }
     );
     const { password: pass, ...rest } = validUser._doc; //deselcting password to send user(this will send all data accept password)
+    const isProduction = process.env.NODE_ENV_CUSTOM === "production";
+
     res
       .cookie("X_TTMS_access_token", token, {
         httpOnly: true,
         maxAge: 4 * 24 * 60 * 60 * 1000,
+        sameSite: isProduction ? "none" : "lax",
+        secure: isProduction,
       })
       .status(200)
       .send({

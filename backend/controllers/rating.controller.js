@@ -22,9 +22,8 @@ export const giveRating = async (req, res) => {
       });
       let average_rating =
         (await Math.round((totalStars / totalRatings) * 10)) / 10;
-      // console.log("total ratings: " + totalRatings);
-      // console.log("total stars: " + totalStars);
-      // console.log("average: " + average_rating);
+
+        
 
       const setPackageRatings = await Package.findByIdAndUpdate(
         req.body.packageId,
