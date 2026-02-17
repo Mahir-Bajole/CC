@@ -23,7 +23,7 @@ export const giveRating = async (req, res) => {
       let average_rating =
         (await Math.round((totalStars / totalRatings) * 10)) / 10;
 
-        
+
 
       const setPackageRatings = await Package.findByIdAndUpdate(
         req.body.packageId,
@@ -36,7 +36,7 @@ export const giveRating = async (req, res) => {
         { new: true }
       );
 
-      // console.log(setPackageRatings);
+      
 
       if (setPackageRatings) {
         return res.status(201).send({

@@ -19,12 +19,27 @@ mongoose
   .then(() => {
     console.log("MongoDB Connected");
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    console.log("MongoDB connection error:", err);
+    process.exit(1);
+  });
+
+const allowedOrigins = process.env.SERVER_URL
+  ? process.env.SERVER_URL.split(",").map((url) => url.trim())
+  : ["http://localhost:5173"];
 
 app.use(
   cors({
-    origin: process.env.SERVER_URL,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
@@ -51,6 +66,7 @@ if (process.env.NODE_ENV_CUSTOM === "production") {
 }
 
 //port
-app.listen(8000, () => {
-  console.log("listening on 8000");
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
