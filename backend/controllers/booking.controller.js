@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb";
 export const bookPackage = async (req, res) => {
   try {
     const { packageDetails, buyer, totalPrice, persons, date } = req.body;
+    const routePackageId = req?.params?.packageId;
 
     if (req.user.id !== buyer) {
       return res.status(401).send({
@@ -21,6 +22,13 @@ export const bookPackage = async (req, res) => {
       });
     }
 
+    if (routePackageId && routePackageId !== packageDetails) {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid package details!",
+      });
+    }
+
     const validPackage = await Package.findById(packageDetails);
 
     if (!validPackage) {
@@ -30,12 +38,20 @@ export const bookPackage = async (req, res) => {
       });
     }
 
-    const newBooking = await Booking.create(req.body);
+    const newBooking = await Booking.create({
+      packageDetails,
+      buyer,
+      totalPrice,
+      persons,
+      date,
+      status: "Booked",
+    });
 
     if (newBooking) {
       return res.status(201).send({
         success: true,
-        message: "Package Booked!",
+        message: "Booking confirmed and saved!",
+        booking: newBooking,
       });
     } else {
       return res.status(500).send({
