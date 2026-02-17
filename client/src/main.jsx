@@ -7,7 +7,9 @@ import { persistor, store } from "./redux/store.js";
 import { PersistGate } from "redux-persist/integration/react";
 import axios from "axios";
 
-const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "")
+const apiBaseUrl = (
+  import.meta.env.PROD ? "" : import.meta.env.VITE_API_BASE_URL || ""
+)
   .trim()
   .replace(/\/+$/, "");
 
